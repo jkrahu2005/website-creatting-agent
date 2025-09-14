@@ -9,45 +9,284 @@ import { GoogleGenAI } from "@google/genai";
 // Initialize AI safely
 let ai = null;
 
-// System instruction for dynamic website generation with images
+// System instruction for frontend website generation with enhanced cloning capability
 const systemInstruction = `
-You are an expert front-end developer specializing in dynamic, modern websites.
-Generate a complete, working website where:
-1. index.html contains ONLY a root div with id="root" and script tags
-2. All content is dynamically created using JavaScript in script.js
-3. style.css contains all styling
-4. Include relevant images from placeholder services like Picsum, Unsplash, etc.
+You are an expert front-end developer specializing in cloning popular web platforms.
+Generate a complete, working frontend website with proper HTML structure that works within a React preview environment.
 
-Return ONLY valid JSON in this exact format:
+IMPORTANT: You MUST return ONLY valid JSON in this exact format:
 {
   "files": {
-    "index.html": "<!DOCTYPE html>...<div id=\\"root\\"></div>...",
-    "style.css": "CSS content with escaped newlines as \\\\n and escaped quotes as \\"",
-    "script.js": "JavaScript that dynamically creates all content inside div#root"
+    "index.html": "VALID HTML CODE with proper structure",
+    "style.css": "CSS content",
+    "script.js": "JavaScript code"
   }
 }
 
 CRITICAL RULES:
-1. HTML must be minimal: only doctype, html, head, body with div#root, and script tags
-2. All visible content must be created dynamically by JavaScript
-3. Use placeholder images from services like:
-   - https://picsum.photos/ (random: https://picsum.photos/400/300)
-   - https://via.placeholder.com/ (specific: https://via.placeholder.com/400x300)
-   - https://source.unsplash.com/ (themed: https://source.unsplash.com/400x300/?nature)
-4. Make websites interactive with JavaScript event handlers
-5. Escape all double quotes inside strings with \\"
-6. Replace all actual newlines with \\\\n
-7. No markdown, backticks, or extra text outside the JSON
-8. Use only plain HTML, CSS, and JavaScript (no frameworks)
-9. Ensure the code is complete, functional, and responsive
-10. Create modern, visually appealing designs with gradients, shadows, and animations
+1. HTML MUST be properly structured with: <!DOCTYPE html>, <html>, <head>, and <body> tags
+2. HTML must include: <meta charset="UTF-8"> and <meta name="viewport"> in head
+3. All content must be placed inside the <body> tags
+4. Use semantic HTML5 elements: <header>, <nav>, <main>, <section>, <article>, <footer>
+5. Include proper CSS linking: <link rel="stylesheet" href="style.css">
+6. Include proper JS linking: <script src="script.js"></script> at the end of body
+7. Escape all double quotes inside strings with \\"
+8. Replace all actual newlines with \\\\n
+9. No markdown, backticks, or extra text outside the JSON
+10. Use only plain HTML, CSS, and JavaScript (no frameworks)
+11. Ensure the code is complete, functional, and responsive
+12. Create modern, visually appealing designs that mimic real-world websites
+
+SPECIAL INSTRUCTIONS FOR NAVIGATION:
+- NEVER use <a href="#"> or <a href=""> for navigation links
+- Use buttons or span elements for navigation instead of anchor tags
+- Implement navigation using JavaScript event listeners
+- Prevent default behavior on all click events
+- Use data attributes for navigation targets: data-page="home"
+- Example: <button class="nav-link" data-page="home">Home</button>
+
+SPECIAL INSTRUCTIONS FOR PREVIEW ENVIRONMENT:
+- All navigation must work without reloading the page
+- Avoid using target="_blank" in links
+- Use event.preventDefault() on all interactive elements
+- Ensure all functionality works within an iframe environment
+
+WEBSITE TYPES TO SUPPORT (FOCUS ON POPULAR WEBSITE CLONES):
+
+E-COMMERCE (Amazon, Flipkart, eBay):
+- Product grid layout with cards
+- Each product card should contain: image, title, price, rating, "Add to Cart" button
+- Header with search bar, cart icon, user account dropdown
+- Category navigation menu
+- Hero banner or carousel
+- Footer with multiple columns of links
+
+STREAMING (Netflix, YouTube, Disney+):
+- Hero banner with featured content
+- Horizontal scrolling content rows
+- Content cards with hover effects showing more info
+- Minimal navigation with logo and user profile
+- Footer with links and copyright
+
+SOCIAL MEDIA (Facebook, Instagram, Twitter):
+- Feed layout with posts
+- Post cards containing: user avatar, content, engagement buttons
+- Sidebar with trending topics or friend suggestions
+- Top navigation with icons for notifications, messages, etc.
+
+DASHBOARDS (Analytics, Admin Panels, Stock Trackers):
+- Grid layout with cards/widgets
+- Data visualizations (charts, graphs, metrics)
+- Clean, minimal design with clear typography
+- Sidebar navigation with icons
+- Header with user profile and notifications
+
+NEWS/MEDIA (BBC, CNN, Medium):
+- Article grid or list layout
+- Featured article with large image
+- Category navigation
+- Newsletter signup form
+- Footer with extensive links
+
+For images, use these placeholder services:
+- Product images: https://picsum.photos/200/300?random=1 (change number for different images)
+- Profile avatars: https://i.pravatar.cc/150?img=1 (change number for different avatars)
+- Content images: https://source.unsplash.com/400x300/?movie (change keyword)
+
+For icons, use:
+- Font Awesome CDN: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+For fonts, use Google Fonts:
+- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+ESSENTIAL FEATURES TO INCLUDE WHEN APPROPRIATE:
+- Responsive navigation with hamburger menu for mobile
+- CSS animations and transitions for interactive elements
+- Modal windows for product details or login
+- Carousels and image sliders for featured content
+- Tabbed interfaces for category browsing
+- Hover effects on cards and buttons
+- Loading states for dynamic content
+
+SPECIFIC PATTERNS FOR DIFFERENT WEBSITE TYPES:
+
+E-COMMERCE PATTERN:
+<header>
+  <nav>...</nav>
+  <div class="search-bar">...</div>
+  <div class="user-actions">...</div>
+</header>
+<main>
+  <section class="hero-banner">...</section>
+  <section class="categories">...</section>
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="https://picsum.photos/200/300?random=1" alt="Product">
+        <h3>Product Title</h3>
+        <div class="rating">★★★★☆</div>
+        <div class="price">$19.99</div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+      <!-- More product cards -->
+    </div>
+  </section>
+</main>
+<footer>...</footer>
+
+STREAMING SERVICE PATTERN:
+<header>...</header>
+<main>
+  <section class="featured-content">...</section>
+  <section class="content-row">
+    <h2>Popular Movies</h2>
+    <div class="row-scroll">
+      <div class="content-card">
+        <img src="https://source.unsplash.com/200x300/?movie" alt="Movie">
+        <div class="card-hover-info">
+          <h3>Movie Title</h3>
+          <p>Description goes here...</p>
+          <button>Play</button>
+        </div>
+      </div>
+      <!-- More content cards -->
+    </div>
+  </section>
+  <!-- More content rows -->
+</main>
+<footer>...</footer>
+
+DASHBOARD PATTERN:
+<div class="dashboard-container">
+  <aside class="sidebar">...</aside>
+  <main class="dashboard-content">
+    <header class="dashboard-header">...</header>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Total Revenue</h3>
+        <div class="metric-value">$24,582</div>
+        <div class="metric-chart">Simple bar chart using CSS</div>
+      </div>
+      <!-- More metric cards -->
+    </div>
+    <div class="data-section">
+      <h2>Performance Analysis</h2>
+      <div class="chart-container">
+        <!-- Chart would go here -->
+        <div class="placeholder-chart">Chart visualization</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+Example of proper JavaScript for navigation:
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            showPage(page);
+        });
+    });
+    
+    // Show initial page
+    showPage('home');
+});
+
+function showPage(page) {
+    // Hide all pages
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(p => p.style.display = 'none');
+    
+    // Show selected page
+    const currentPage = document.getElementById(page + '-page');
+    if (currentPage) {
+        currentPage.style.display = 'block';
+    }
+}
+
+When creating clones, focus on:
+1. Replicating the core layout and visual design
+2. Implementing key functionality with JavaScript
+3. Maintaining responsive design principles
+4. Using appropriate color schemes and typography
+5. Creating intuitive user interactions
+6. Ensuring accessibility standards
 `.trim();
 
-// Safe JSON parse function
+// Function to fix malformed HTML structure
+function fixHTMLStructure(html) {
+  let fixedHtml = html;
+  
+  // Ensure DOCTYPE is present
+  if (!fixedHtml.includes('<!DOCTYPE html>')) {
+    fixedHtml = '<!DOCTYPE html>\n' + fixedHtml;
+  }
+  
+  // Ensure html tags are present
+  if (!fixedHtml.includes('<html')) {
+    fixedHtml = fixedHtml.replace('<!DOCTYPE html>', '<!DOCTYPE html>\n<html lang="en">');
+  }
+  if (!fixedHtml.includes('</html>')) {
+    fixedHtml += '\n</html>';
+  }
+  
+  // Ensure head and body are present
+  if (!fixedHtml.includes('<head>')) {
+    const headContent = `
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>`;
+    
+    if (fixedHtml.includes('<html')) {
+      fixedHtml = fixedHtml.replace('<html', '<html lang="en">\n' + headContent + '\n<body>');
+    } else {
+      fixedHtml = fixedHtml.replace('<!DOCTYPE html>', '<!DOCTYPE html>\n<html lang="en">\n' + headContent + '\n<body>');
+    }
+  }
+  
+  if (!fixedHtml.includes('</body>')) {
+    fixedHtml += '\n</body>';
+  }
+  
+  // Ensure script tag is present
+  if (!fixedHtml.includes('<script src="script.js"')) {
+    if (fixedHtml.includes('</body>')) {
+      fixedHtml = fixedHtml.replace('</body>', '    <script src="script.js"></script>\n</body>');
+    } else {
+      fixedHtml += '\n    <script src="script.js"></script>';
+    }
+  }
+  
+  return fixedHtml;
+}
+
+// Safe JSON parse function with HTML validation
 function safeJSONParse(str) {
   try {
     // First, try to parse directly
-    return JSON.parse(str);
+    const parsed = JSON.parse(str);
+    
+    // Validate the HTML structure
+    if (parsed.files && parsed.files["index.html"]) {
+      const html = parsed.files["index.html"];
+      
+      // Basic HTML validation
+      if (!html.includes('<!DOCTYPE html>') || !html.includes('<html') || !html.includes('</html>')) {
+        console.warn("HTML structure is incomplete, fixing it");
+        parsed.files["index.html"] = fixHTMLStructure(html);
+      }
+    }
+    
+    return parsed;
   } catch (firstError) {
     console.log("First parse attempt failed, trying cleanup");
     
@@ -61,20 +300,34 @@ function safeJSONParse(str) {
         if (!cleaned.startsWith('{')) {
           cleaned = `{"files":${cleaned}}`;
         }
-        return JSON.parse(cleaned);
+        const parsed = JSON.parse(cleaned);
+        
+        // Fix HTML structure if needed
+        if (parsed.files && parsed.files["index.html"]) {
+          parsed.files["index.html"] = fixHTMLStructure(parsed.files["index.html"]);
+        }
+        
+        return parsed;
       }
       
       // Try to extract JSON from the response
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]);
+        
+        // Fix HTML structure if needed
+        if (parsed.files && parsed.files["index.html"]) {
+          parsed.files["index.html"] = fixHTMLStructure(parsed.files["index.html"]);
+        }
+        
+        return parsed;
       }
       
       throw new Error("No JSON found in response");
     } catch (secondError) {
       console.error("All parsing attempts failed:", secondError, "Original response:", str);
       
-      // Last resort: create a basic error response
+      // Last resort: create a basic error response with proper HTML structure
       return {
         files: {
           "index.html": `<!DOCTYPE html>
@@ -86,21 +339,45 @@ function safeJSONParse(str) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <h1>Website Generation Issue</h1>
+        <p>There was a problem generating your website. Please try a different prompt.</p>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>`,
-          "style.css": "body { font-family: Arial, sans-serif; padding: 20px; } h1 { color: #d32f2f; }",
-          "script.js": `console.error('Website generation failed');
-const root = document.getElementById('root');
-root.innerHTML = '<h1>Error Generating Website</h1><p>There was an issue generating your website. Please try again with a different prompt.</p>';`
+          "style.css": `body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #d32f2f;
+    margin-bottom: 20px;
+}`,
+          "script.js": `console.log("Website loaded");
+// Basic functionality can be added here`
         }
       };
     }
   }
 }
 
-// Generate website code from AI
+// Generate website code from AI with enhanced cloning capability
 async function generateWebsiteCode(prompt) {
   if (!ai) {
     console.error("AI not initialized");
@@ -119,17 +396,19 @@ async function generateWebsiteCode(prompt) {
           contents: [{ 
             role: "user", 
             parts: [{ 
-              text: `Create a dynamic, modern website for: ${prompt}. 
-              HTML should only have a root div, all content must be created by JavaScript. 
-              Include relevant images from placeholder services. 
-              Make it interactive and visually appealing. 
-              Return only valid JSON.` 
+              text: `Create a complete frontend website clone for: ${prompt}. 
+              Use proper HTML5 structure with semantic elements.
+              Make it responsive and modern-looking.
+              Include CSS styling and JavaScript functionality.
+              Focus on replicating the visual design and key features of the original website.
+              Use button elements for navigation instead of anchor tags.
+              Return only valid JSON with index.html, style.css, and script.js.` 
             }] 
           }],
           config: { 
             systemInstruction,
-            temperature: 0.8, // Slightly higher temperature for more creativity
-            maxOutputTokens: 4096,
+            temperature: 0.7, // Balanced temperature for creative but consistent cloning
+            maxOutputTokens: 6000, // Increased tokens for complex website clones
           },
         });
 
@@ -161,13 +440,19 @@ async function generateWebsiteCode(prompt) {
       contents: [{ 
         role: "user", 
         parts: [{ 
-          text: `Create a dynamic website for: ${prompt}. HTML should only have a root div, all content must be created by JavaScript. Include relevant images. Return only valid JSON.` 
+          text: `Create a complete frontend website clone for: ${prompt}. 
+          Use proper HTML5 structure with semantic elements.
+          Make it responsive and modern-looking.
+          Include CSS styling and JavaScript functionality.
+          Focus on replicating the visual design and key features of the original website.
+          Use button elements for navigation instead of anchor tags.
+          Return only valid JSON with index.html, style.css, and script.js.` 
         }] 
       }],
       config: { 
         systemInstruction,
-        temperature: 0.8,
-        maxOutputTokens: 4096,
+        temperature: 0.7,
+        maxOutputTokens: 6000,
       },
     });
 
@@ -222,185 +507,390 @@ function App() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI WebBuilder</title>
+    <title>AI WebBuilder - Website Cloner</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="root"></div>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="logo">AI WebBuilder</h1>
+                <ul class="nav-menu">
+                    <li><button class="nav-link" data-page="home">Home</button></li>
+                    <li><button class="nav-link" data-page="examples">Examples</button></li>
+                    <li><button class="nav-link" data-page="about">About</button></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home-page" class="page">
+            <div class="hero">
+                <div class="hero-content">
+                    <h2>Clone Any Website Instantly</h2>
+                    <p>Generate fully functional frontend clones of popular websites with just a description</p>
+                    <div class="example-prompts">
+                        <p>Try prompts like:</p>
+                        <ul>
+                            <li>"Create an Amazon product page clone"</li>
+                            <li>"Build a Netflix-style homepage"</li>
+                            <li>"Make a dashboard similar to Google Analytics"</li>
+                            <li>"Create a Facebook news feed clone"</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://picsum.photos/600/400?random=1" alt="Website Cloning">
+                </div>
+            </div>
+        </section>
+
+        <section id="examples-page" class="page" style="display:none;">
+            <div class="examples">
+                <h3>Website Cloning Examples</h3>
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <img src="https://picsum.photos/300/200?random=2" alt="E-commerce Example">
+                        <h4>E-commerce Sites</h4>
+                        <p>Amazon, Flipkart, eBay product pages with grids, carts, and filters</p>
+                    </div>
+                    <div class="example-card">
+                        <img src="https://picsum.photos/300/200?random=3" alt="Streaming Example">
+                        <h4>Streaming Services</h4>
+                        <p>Netflix, YouTube, Disney+ interfaces with content rows and cards</p>
+                    </div>
+                    <div class="example-card">
+                        <img src="https://picsum.photos/300/200?random=4" alt="Dashboard Example">
+                        <h4>Dashboards</h4>
+                        <p>Analytics panels with charts, metrics, and data visualizations</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-page" class="page" style="display:none;">
+            <div class="about">
+                <h3>About AI WebBuilder Cloner</h3>
+                <p>This tool specializes in creating frontend clones of popular websites using AI. It generates clean HTML, CSS, and JavaScript that mimics the visual design and functionality of real-world platforms.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 AI WebBuilder. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>`,
-    "style.css": `body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
+    "style.css": `/* Global Styles */
+* {
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #333;
-    min-height: 100vh;
+    box-sizing: border-box;
 }
 
-#root {
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+/* Navigation */
+nav {
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-}`,
-    "script.js": `console.log("AI WebBuilder loaded successfully!");
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-// Dynamic content creation
-document.addEventListener('DOMContentLoaded', function() {
-    const root = document.getElementById('root');
-    
-    // Create header
-    const header = document.createElement('header');
-    header.innerHTML = \`
-        <h1>Welcome to AI WebBuilder!</h1>
-        <p>Create dynamic websites with images and interactivity</p>
-    \`;
-    header.style.cssText = \`
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4a4a4a;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-link {
+    background: none;
+    border: none;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.nav-link:hover {
+    color: #007bff;
+    background-color: #f0f0f0;
+}
+
+.nav-link.active {
+    color: #007bff;
+    background-color: #e6f0ff;
+}
+
+/* Hero Section */
+.hero {
+    max-width: 1200px;
+    margin: 6rem auto 3rem;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.example-prompts {
+    background: #f0f4f8;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.example-prompts p {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.example-prompts ul {
+    list-style: none;
+}
+
+.example-prompts li {
+    padding: 0.3rem 0;
+    color: #4a5568;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.example-prompts li:before {
+    content: "•";
+    color: #4299e1;
+    position: absolute;
+    left: 0;
+}
+
+.cta-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cta-button:hover {
+    background: #0056b3;
+}
+
+.hero-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Examples Section */
+.examples {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 2rem;
+}
+
+.examples h3 {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.example-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+    text-align: center;
+}
+
+.example-card:hover {
+    transform: translateY(-5px);
+}
+
+.example-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.example-card h4 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+/* About and Contact Sections */
+.about, .contact {
+    max-width: 1200px;
+    margin: 6rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.about h3, .contact h3 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+}
+
+/* Footer */
+footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
         text-align: center;
-        color: white;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    \`;
+    }
     
-    // Create main content
-    const main = document.createElement('main');
-    main.innerHTML = \`
-        <div class="features">
-            <div class="feature">
-                <img src="https://picsum.photos/300/200?random=1" alt="Dynamic Generation">
-                <h2>🚀 Dynamic Generation</h2>
-                <p>All content created dynamically with JavaScript</p>
-                <button class="feature-btn">Learn More</button>
-            </div>
-            <div class="feature">
-                <img src="https://picsum.photos/300/200?random=2" alt="Modern Design">
-                <h2>🎨 Modern Design</h2>
-                <p>Beautiful, responsive websites automatically</p>
-                <button class="feature-btn">Learn More</button>
-            </div>
-            <div class="feature">
-                <img src="https://picsum.photos/300/200?random=3" alt="Fast Development">
-                <h2>⚡ Fast Development</h2>
-                <p>Generate complete websites in seconds</p>
-                <button class="feature-btn">Learn More</button>
-            </div>
-        </div>
-        <div class="cta">
-            <h2>Ready to Create Your Website?</h2>
-            <p>Enter a prompt above to generate your website!</p>
-            <button id="generateBtn">Generate Website</button>
-        </div>
-    \`;
-    main.style.cssText = \`
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    \`;
+    .nav-menu {
+        flex-direction: column;
+        gap: 1rem;
+    }
     
-    // Add styles for features
-    const style = document.createElement('style');
-    style.textContent = \`
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        .feature {
-            text-align: center;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .feature:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-        .feature img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-        .feature h2 {
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-        .feature p {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-        .feature-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .feature-btn:hover {
-            background: #5a67d8;
-        }
-        .cta {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border-radius: 10px;
-        }
-        .cta h2 {
-            margin-bottom: 1rem;
-        }
-        #generateBtn {
-            background: white;
-            color: #28a745;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 1rem;
-        }
-        #generateBtn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        @media (max-width: 768px) {
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
-    \`;
-    
-    // Append everything to root
-    root.appendChild(header);
-    root.appendChild(main);
-    document.head.appendChild(style);
-    
-    // Add interactivity
-    const featureButtons = document.querySelectorAll('.feature-btn');
-    featureButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            alert('Feature button clicked! This could open a modal or navigate to a section.');
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+}`,
+    "script.js": `console.log("AI WebBuilder website cloner loaded successfully!");
+
+// Navigation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            showPage(page);
+            
+            // Update active state
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
         });
     });
     
-    const generateBtn = document.getElementById('generateBtn');
-    generateBtn.addEventListener('click', () => {
-        alert('Ready to generate your website! Enter a prompt in the input field above.');
-    });
+    // Show initial page
+    showPage('home');
+    document.querySelector('[data-page="home"]').classList.add('active');
+});
+
+function showPage(page) {
+    // Hide all pages
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(p => p.style.display = 'none');
     
-    console.log("Dynamic content with images created successfully!");
-});`
+    // Show selected page
+    const currentPage = document.getElementById(page + '-page');
+    if (currentPage) {
+        currentPage.style.display = 'block';
+    }
+}
+
+// Add animation to example cards on scroll
+const exampleCards = document.querySelectorAll('.example-card');
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, { threshold: 0.1 });
+
+exampleCards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});
+
+// Image error handling
+function handleImageError(img) {
+    console.log('Image failed to load:', img.src);
+    img.src = 'https://via.placeholder.com/300x200/cccccc/969696?text=Image+Not+Found';
+    img.alt = 'Placeholder image';
+}
+
+// Initialize image error handling
+const images = document.querySelectorAll('img');
+images.forEach(img => {
+    img.addEventListener('error', function() {
+        handleImageError(this);
+    });
+});
+
+console.log("All JavaScript functionality loaded");`
   });
 
   // Resizable panel state
@@ -444,7 +934,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      setError("Please enter a prompt first. Example: 'create a portfolio website with image gallery'");
+      setError("Please enter a prompt first. Example: 'create an Amazon product page clone' or 'build a Netflix-style homepage'");
       return;
     }
     
@@ -517,8 +1007,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div className="flex-1 flex items-center justify-center text-gray-500 dark:text-gray-400">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                    <p>Generating your dynamic website... ⏳</p>
-                    <p className="text-sm mt-2">Creating interactive content with images</p>
+                    <p>Generating your website clone... ⏳</p>
+                    <p className="text-sm mt-2">Creating responsive frontend code</p>
                   </div>
                 </div>
               ) : (
