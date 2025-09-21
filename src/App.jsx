@@ -112,30 +112,160 @@ ESSENTIAL FEATURES TO INCLUDE WHEN APPROPRIATE:
 
 SPECIFIC PATTERNS FOR DIFFERENT WEBSITE TYPES:
 
-E-COMMERCE PATTERN:
-<header>
-  <nav>...</nav>
-  <div class="search-bar">...</div>
-  <div class="user-actions">...</div>
-</header>
-<main>
-  <section class="hero-banner">...</section>
-  <section class="categories">...</section>
-  <section class="featured-products">
-    <h2>Featured Products</h2>
-    <div class="product-grid">
-      <div class="product-card">
-        <img src="https://picsum.photos/200/300?random=1" alt="Product">
-        <h3>Product Title</h3>
-        <div class="rating">★★★★☆</div>
-        <div class="price">$19.99</div>
-        <button class="add-to-cart">Add to Cart</button>
+E-COMMERCE PATTERN (Follow this exact structure):
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E-Commerce Store</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header id="site-header" class="bg-white sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo + Categories -->
+        <div class="flex items-center gap-4">
+          <a href="#" class="flex items-center gap-2">
+            <img src="https://picsum.photos/40/40?random=99" alt="logo" class="rounded" />
+            <span class="font-bold text-lg">ShopMock</span>
+          </a>
+
+          <nav class="hidden md:flex items-center gap-4 text-sm text-gray-600">
+            <a href="#" class="hover:text-gray-900">Electronics</a>
+            <a href="#" class="hover:text-gray-900">Fashion</a>
+            <a href="#" class="hover:text-gray-900">Home</a>
+            <a href="#" class="hover:text-gray-900">Grocery</a>
+          </nav>
+        </div>
+
+        <!-- Search bar -->
+        <div class="flex-1 mx-4">
+          <div class="relative">
+            <input id="searchInput" type="search" placeholder="Search for products, brands and more" class="w-full border rounded-md py-2 px-4 pr-32 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            <button id="searchBtn" class="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 rounded">Search</button>
+
+            <ul id="suggestions" class="absolute left-0 right-0 bg-white border mt-1 rounded-md shadow-md hidden max-h-56 overflow-auto"></ul>
+          </div>
+        </div>
+
+        <!-- User actions -->
+        <div class="flex items-center gap-4">
+          <button id="loginBtn" class="hidden sm:inline-block text-sm px-3 py-1 rounded hover:bg-gray-100">Login</button>
+          <button id="wishlistBtn" class="text-sm px-3 py-1 rounded hover:bg-gray-100">Wishlist</button>
+
+          <button id="cartBtn" class="relative bg-white border rounded px-3 py-1 hover:bg-gray-50">
+            Cart
+            <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </button>
+        </div>
+
       </div>
-      <!-- More product cards -->
     </div>
-  </section>
-</main>
-<footer>...</footer>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto p-4 md:p-6">
+
+    <!-- Hero -->
+    <section class="hero-banner bg-gradient-to-r from-indigo-600 to-indigo-400 text-white rounded-lg p-6 mb-6">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="flex-1">
+          <h1 class="text-3xl md:text-4xl font-bold">Big deals, everyday low prices</h1>
+          <p class="mt-2 opacity-90">Discover top brands, instant discounts and fast delivery. Free returns within 7 days.</p>
+          <div class="mt-4 flex gap-3">
+            <a href="#featured" class="bg-white text-indigo-600 font-semibold px-4 py-2 rounded shadow">Shop Featured</a>
+            <a href="#categories" class="border border-white px-4 py-2 rounded text-white">Browse Categories</a>
+          </div>
+        </div>
+        <div class="w-64 hidden md:block">
+          <img src="https://picsum.photos/320/220?random=20" alt="hero" class="rounded shadow-lg" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories" class="mb-6">
+      <h2 class="text-xl font-semibold mb-3">Top Categories</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+        <div class="bg-white p-3 rounded text-center shadow-sm">Mobiles</div>
+        <div class="bg-white p-3 rounded text-center shadow-sm">Fashion</div>
+        <div class="bg-white p-3 rounded text-center shadow-sm">Home</div>
+        <div class="bg-white p-3 rounded text-center shadow-sm">Appliances</div>
+        <div class="bg-white p-3 rounded text-center shadow-sm">Beauty</div>
+        <div class="bg-white p-3 rounded text-center shadow-sm">Grocery</div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="featured" class="featured-products mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold">Featured Products</h2>
+        <div class="text-sm text-gray-600">Showing <span id="productsCount"></span> results</div>
+      </div>
+
+      <div class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="productGrid">
+        <!-- Product cards will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Simple footer CTA -->
+    <section class="bg-white rounded p-6 text-center shadow-sm">
+      <h3 class="font-semibold text-lg">Want daily deals in your inbox?</h3>
+      <p class="text-sm text-gray-600 mt-2">Sign up for our newsletter and never miss a discount.</p>
+      <div class="mt-4 flex justify-center gap-2">
+        <input id="newsletterEmail" type="email" placeholder="you@example.com" class="border rounded-l px-3 py-2 w-64" />
+        <button id="subscribeBtn" class="bg-indigo-600 text-white px-4 rounded-r">Subscribe</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 border-t bg-white">
+    <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <h4 class="font-semibold">ShopMock</h4>
+        <p class="text-sm text-gray-600 mt-2">A demo e-commerce frontend pattern inspired by big marketplaces.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold">Help</h4>
+        <ul class="text-sm text-gray-600 mt-2 space-y-1">
+          <li>Customer Care</li>
+          <li>Shipping</li>
+          <li>Returns</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">Follow</h4>
+        <div class="flex gap-2 mt-2">
+          <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">F</div>
+          <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">T</div>
+          <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">I</div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center py-4 text-sm text-gray-500">© 2025 ShopMock. All rights reserved.</div>
+  </footer>
+
+  <!-- Cart Drawer (hidden by default) -->
+  <div id="cartDrawer" class="fixed right-4 bottom-4 bg-white border rounded shadow-lg w-80 p-4 hidden">
+    <h3 class="font-semibold mb-2">Cart</h3>
+    <div id="cartItems" class="space-y-2 max-h-56 overflow-auto"></div>
+    <div class="mt-3 flex justify-between items-center">
+      <div class="font-semibold">Total: <span id="cartTotal">$0.00</span></div>
+      <button id="checkoutBtn" class="bg-indigo-600 text-white px-3 py-1 rounded">Checkout</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
 STREAMING SERVICE PATTERN:
 <header>...</header>
