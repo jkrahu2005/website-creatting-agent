@@ -89,9 +89,10 @@ NEWS/MEDIA (BBC, CNN, Medium):
 - Footer with extensive links
 
 For images, use these placeholder services:
-- Product images: https://picsum.photos/200/300?random=1 (change number for different images)
-- Profile avatars: https://i.pravatar.cc/150?img=1 (change number for different avatars)
-- Content images: https://source.unsplash.com/400x300/?movie (change keyword)
+- Product images: https://picsum.photos/200/300
+- Profile avatars: https://i.pravatar.cc/150
+- Content images: https://picsum.photos/400/300
+- Logo images: https://picsum.photos/40/40
 
 For icons, use:
 - Font Awesome CDN: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -132,7 +133,7 @@ E-COMMERCE PATTERN (Follow this exact structure):
         <!-- Logo + Categories -->
         <div class="flex items-center gap-4">
           <a href="#" class="flex items-center gap-2">
-            <img src="https://picsum.photos/40/40?random=99" alt="logo" class="rounded" />
+            <img src="https://picsum.photos/40/40" alt="logo" class="rounded" />
             <span class="font-bold text-lg">ShopMock</span>
           </a>
 
@@ -184,7 +185,7 @@ E-COMMERCE PATTERN (Follow this exact structure):
           </div>
         </div>
         <div class="w-64 hidden md:block">
-          <img src="https://picsum.photos/320/220?random=20" alt="hero" class="rounded shadow-lg" />
+          <img src="https://picsum.photos/320/220" alt="hero" class="rounded shadow-lg" />
         </div>
       </div>
     </section>
@@ -275,7 +276,7 @@ STREAMING SERVICE PATTERN:
     <h2>Popular Movies</h2>
     <div class="row-scroll">
       <div class="content-card">
-        <img src="https://source.unsplash.com/200x300/?movie" alt="Movie">
+        <img src="https://picsum.photos/200/300" alt="Movie">
         <div class="card-hover-info">
           <h3>Movie Title</h3>
           <p>Description goes here...</p>
@@ -348,7 +349,6 @@ When creating clones, focus on:
 5. Creating intuitive user interactions
 6. Ensuring accessibility standards
 `.trim();
-
 // Function to fix malformed HTML structure
 function fixHTMLStructure(html) {
   let fixedHtml = html;
