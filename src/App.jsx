@@ -36,6 +36,7 @@ CRITICAL RULES:
 10. Use only plain HTML, CSS, and JavaScript (no frameworks)
 11. Ensure the code is complete, functional, and responsive
 12. Create modern, visually appealing designs that mimic real-world websites
+13. AVOID complex CDN attributes like integrity and crossorigin that break JSON parsing
 
 SPECIAL INSTRUCTIONS FOR NAVIGATION:
 - NEVER use <a href="#"> or <a href=""> for navigation links
@@ -95,7 +96,7 @@ For images, use these placeholder services:
 - Logo images: https://picsum.photos/40/40
 
 For icons, use:
-- Font Awesome CDN: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+- Font Awesome CDN: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 For fonts, use Google Fonts:
 - <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -121,7 +122,7 @@ E-COMMERCE PATTERN (Follow this exact structure):
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>E-Commerce Store</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -341,6 +342,12 @@ function showPage(page) {
     }
 }
 
+JSON GENERATION RULES:
+- Use simple CDN links without integrity or crossorigin attributes
+- Keep URLs clean and simple
+- Avoid special characters that break JSON parsing
+- Test all generated JSON in a validator before returning
+
 When creating clones, focus on:
 1. Replicating the core layout and visual design
 2. Implementing key functionality with JavaScript
@@ -517,12 +524,18 @@ async function generateWebsiteCode(prompt) {
   try {
     // Updated list of reliable models for website generation
     const modelsToTry = [
-      "gemini-1.5-flash-latest",
-      "gemini-1.5-pro-latest", 
-      "gemini-2.0-flash-exp",
-      "models/gemini-1.5-flash",
-      "gemini-pro"
-    ];
+  // 🥇 Best for Volume (Max RPD)
+  "gemini-2.5-flash-lite",          // ~1,000 RPD. Fastest, most cost-efficient. Ideal for high-volume free use.
+  
+  // 🥈 Great Balance
+  "gemini-2.5-flash",               // ~250 RPD. Best for general tasks, good speed, and a solid daily limit. (Recommended Alias)
+  "gemini-2.0-flash",               // ~200 RPD. Legacy Flash model. Still has a good RPD and 1M token context.
+
+  // 🥉 Specialized / Complex (Low RPD)
+  "gemini-2.5-pro",                 // ~50 - 100 RPD. The most capable model, but reserve for complex, critical tasks due to low daily limit.
+  "gemini-2.5-flash-image",         // ~100 RPD. Dedicated model for native image generation/editing. (Has its own quota)
+  "gemini-2.5-pro-preview-09-2025", // Avoid: Specific preview versions have uncertain and often changing limits.
+];
     
     for (const model of modelsToTry) {
       try {
